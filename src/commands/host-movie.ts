@@ -52,7 +52,7 @@ export const HostMovieCommand = async (
   const eventChannel = await guild.channels.create({
     name: title,
     type: ChannelType.GuildStageVoice,
-    parent: '1241913909636759612',
+    parent: '1058190949504782386',
   });
 
   const endDate = new Date(startDate);
