@@ -12,12 +12,12 @@ export class Scheduler {
   public scheduleRatingMessage(movieId: number, title: string, endTime: Date) {
     const now = new Date();
     const delay = endTime.getTime() - now.getTime();
-    if (delay <= 0) {
-      this.sendRatingMessage(movieId, title)
-      return
-    }
-
+    
     console.log(`Scheduling rating message for movie ${movieId} in ${delay}ms from ${now} to ${endTime}`);
+    
+    setTimeout(() => {
+      this.sendRatingMessage(movieId, title);
+    }, delay);
   }
 
   public static handleRatingButton(interaction: ButtonInteraction) {
