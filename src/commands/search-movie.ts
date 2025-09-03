@@ -116,6 +116,14 @@ export const createMovieEmbed = async (
 
   const fields = [];
 
+    if (movie.id) {
+    fields.push({
+      name: 'ID',
+      value: movie.id.toString(),
+      inline: true,
+    });
+  }
+
   if (movie.releaseDate) {
     fields.push({
       name: 'Release Date',

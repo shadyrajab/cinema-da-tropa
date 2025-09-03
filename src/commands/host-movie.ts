@@ -2,12 +2,18 @@ import {
   ApplicationCommandOptionType,
   ChannelType,
   ChatInputCommandInteraction,
+  GuildBasedChannel,
   GuildScheduledEventEntityType,
   GuildScheduledEventPrivacyLevel,
+  TextChannel,
 } from 'discord.js';
 import { ICommandData } from '../interfaces/command.interface';
 import { validateHostParams } from '../utils/validators/host.command-validator';
 import { TheMovieDBServiceFactory } from '../factories/themovie-db-service.factory';
+import { AppDataSource } from '../db/db';
+import { Movie } from '../entities/movie';
+import { DISCORD_MOVIE_CHANNEL_ID } from '../config/constants';
+import { Scheduler } from '../utils/scheduler/scheduler';
 
 export const HostMovieData: ICommandData = {
   name: 'host',
@@ -58,6 +64,11 @@ export const HostMovieCommand = async (
   const endDate = new Date(startDate);
   endDate.setMinutes(endDate.getMinutes() + runtime);
 
+  await interaction.reply({
+    content: `Evento foi criado. <#${eventChannel.id}>`,
+    ephemeral: true,
+  });
+
   await guild.scheduledEvents.create({
     name: title,
     privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
@@ -72,4 +83,20 @@ export const HostMovieCommand = async (
       location: `Hosted by ${interaction.user.username}`,
     },
   });
+
+  const movieRepository = AppDataSource.getRepository(Movie);
+  const movie = movieRepository.create({ title, finished_at: endDate, tmdb_id: movieId.toString() });
+  await movieRepository.save(movie);
+
+  const movieChannel = await guild.channels.fetch(DISCORD_MOVIE_CHANNEL_ID);
+  if (movieChannel?.isTextBased()) {
+    await movieChannel.send({
+      content: `${movie.title} !`,
+    });
+  }
+
+  const scheduler = new Scheduler(movieChannel as TextChannel);
+  scheduler.scheduleRatingMessage(movie.id, movie.title, endDate);
+
+  return;
 };
