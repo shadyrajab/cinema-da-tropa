@@ -19,25 +19,24 @@ export class Scheduler {
     }, delay);
   }
 
-  public static handleRatingButton(interaction: ButtonInteraction) {
+  public static async handleRatingButton(interaction: ButtonInteraction) {
     const userId = interaction.user.id;
     const rating = interaction.customId.split("_")[2];
+    const movieId = parseInt(interaction.customId.split("_")[1]);
 
     const movieRatingRepository = AppDataSource.getRepository(MovieRating);
-    movieRatingRepository.findBy({ user_id: userId }).then(existingRating => {
-      if (existingRating.length > 0) {
-        interaction.reply({ content: "Voce ja deu sua nota!", ephemeral: true });
-        return;
-      }
-    });
+    const existingRating = await movieRatingRepository.findOne({ where: { user_id: userId, movie_id: movieId} });
 
-    const movieId = parseInt(interaction.customId.split("_")[1]);
+    if (existingRating) {
+      return await interaction.reply({ content: "Voce ja deu sua nota!", ephemeral: true });
+    }
+
     const movieRating = movieRatingRepository.create({
       movie_id: movieId,
       user_id: userId,
       rating: parseInt(rating),
     });
-    movieRatingRepository.save(movieRating);
+    await movieRatingRepository.save(movieRating);
 
     interaction.reply({ content: `Obrigado por avaliar com ${rating} estrelas!`, ephemeral: true });
   }

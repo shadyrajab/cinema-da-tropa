@@ -30,7 +30,7 @@ client.on('interactionCreate', async (interaction) => {
   }
     
   if (interaction.isButton() && interaction.customId.startsWith('rate_')) {
-    Scheduler.handleRatingButton(interaction)
+    await Scheduler.handleRatingButton(interaction)
   }
 });
 
