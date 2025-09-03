@@ -16,6 +16,8 @@ export class Scheduler {
       this.sendRatingMessage(movieId, title)
       return
     }
+
+    console.log(`Scheduling rating message for movie ${movieId} in ${delay}ms from ${now} to ${endTime}`);
   }
 
   public static handleRatingButton(interaction: ButtonInteraction) {
