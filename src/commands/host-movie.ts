@@ -96,7 +96,7 @@ export const HostMovieCommand = async (
   }
 
   const scheduler = new Scheduler(movieChannel as TextChannel);
-  scheduler.scheduleRatingMessage(movie.id, movie.title, endDate);
+  scheduler.scheduleRatingMessage(movie.id, movie.title, startDate, endDate);
 
   return;
 };

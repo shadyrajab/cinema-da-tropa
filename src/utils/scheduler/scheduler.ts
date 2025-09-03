@@ -9,11 +9,10 @@ export class Scheduler {
     this.movieChannel = movieChannel;
   }
 
-  public scheduleRatingMessage(movieId: number, title: string, endTime: Date) {
-    const now = new Date();
-    const delay = endTime.getTime() - now.getTime();
+  public scheduleRatingMessage(movieId: number, title: string, startDate: Date, endTime: Date) {
+    const delay = endTime.getTime() - startDate.getTime();
     
-    console.log(`Scheduling rating message for movie ${movieId} in ${delay}ms from ${now} to ${endTime}`);
+    console.log(`Scheduling rating message for movie ${movieId} in ${delay}ms from ${startDate} to ${endTime}`);
     
     setTimeout(() => {
       this.sendRatingMessage(movieId, title);
